@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
+from db.db import Db
 
 TODOS = {
   'todo1': {'task': 'build an API'},
@@ -16,6 +17,8 @@ parser = reqparse.RequestParser()
 parser.add_argument('task')
 
 class Todo(Resource):
+  def __init__(self):
+    
   def get(self, todo_id):
     abort_if_todo_doesnt_exist(todo_id)
     return TODOS[todo_id]
