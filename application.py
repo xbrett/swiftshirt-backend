@@ -3,19 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from models import (Workout)
 
 # Initialize Flask app with SQLAlchemy
-app = Flask(__name__)
-app.config.from_pyfile('config.py')
-db = SQLAlchemy(app)
+application = Flask(__name__)
+application.config.from_pyfile('config.py')
+db = SQLAlchemy(application)
 
-@app.route('/')
+@application.route('/')
 def index_page():
   return "swiftshirt backend api"
 
-@app.route('/info')
+@application.route('/info')
 def info_page():
   return "<html><head></head><body>A RESTful API in Flask using SQLAlchemy. For more info on usage, go to <a href>https://github.com/mgreenw/flask-restapi-example</a>.</body></html>"
 
-@app.route('/api/v1/workout/<id>')
+@application.route('/api/v1/workout/<id>')
 def get_workout():
   try:
     workout = Workout.query.filter_by(id=id).first()
@@ -84,4 +84,4 @@ def not_found(message):
   return response
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000, debug=True)
+  application.run(host='0.0.0.0', port=5000, debug=True)
