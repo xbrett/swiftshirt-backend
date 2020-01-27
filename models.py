@@ -8,8 +8,9 @@ class Workout(db.Model):
   avg_hrt = db.Column(db.Integer)
 
 
-  def __init__(self, name):
+  def __init__(self, name, avg_hrt):
     self.name = name
+    self.avg_hrt = avg_hrt
 
   @property
   def serialize(self):

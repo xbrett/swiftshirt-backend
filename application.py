@@ -4,18 +4,27 @@ from models import (Workout)
 
 # Initialize Flask app with SQLAlchemy
 application = Flask(__name__)
-application.config.from_pyfile('config.py')
-db = SQLAlchemy(application)
+app = application
+app.config.from_pyfile('config.py')
+db = SQLAlchemy(app)
 
-@application.route('/')
+@app.route('/')
 def index_page():
   return "swiftshirt backend api"
 
-@application.route('/info')
+@app.route('/test-data')
+def test_page():
+  return jsonify({
+    "id" : 1,
+    "name" : "Arm Day",
+    "avg_hrt" : 96
+  })
+
+@app.route('/info')
 def info_page():
   return "<html><head></head><body>A RESTful API in Flask using SQLAlchemy. For more info on usage, go to <a href>https://github.com/mgreenw/flask-restapi-example</a>.</body></html>"
 
-@application.route('/api/v1/workout/<id>')
+@app.route('/api/v1/workout/<id>')
 def get_workout():
   try:
     workout = Workout.query.filter_by(id=id).first()
@@ -84,4 +93,4 @@ def not_found(message):
   return response
 
 if __name__ == '__main__':
-  application.run(host='0.0.0.0', port=5000, debug=True)
+  app.run(host='0.0.0.0', port=5000, debug=True)
