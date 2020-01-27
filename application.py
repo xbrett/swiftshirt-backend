@@ -25,7 +25,7 @@ def info_page():
   return "<html><head></head><body>A RESTful API in Flask using SQLAlchemy. For more info on usage, go to <a href>https://github.com/mgreenw/flask-restapi-example</a>.</body></html>"
 
 @app.route('/api/v1/workout/<id>')
-def get_workout():
+def get_workout(id):
   try:
     workout = Workout.query.filter_by(id=id).first()
     return jsonify(workout.serialize)
