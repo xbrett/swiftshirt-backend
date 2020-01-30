@@ -6,8 +6,7 @@ class Workout(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(50), nullable=False)
   avg_hrt = db.Column(db.Integer)
-
-
+  
   def __init__(self, name, avg_hrt):
     self.name = name
     self.avg_hrt = avg_hrt
@@ -20,6 +19,16 @@ class Workout(db.Model):
       'name': self.name,
       'avg_hrt': self.avg_hrt
     }
+
+  # @property
+  # def deserialize(self):
+  #   if not request.is_json or 'name' not in request.get_json():
+  #   return bad_request('Missing required data.')
+  #   return {
+  #     'id': self.id,
+  #     'name': self.name,
+  #     'avg_hrt': self.avg_hrt
+  #   }
 
 # class Doctor(db.Model):
 #   id = db.Column(db.Integer, primary_key=True)
