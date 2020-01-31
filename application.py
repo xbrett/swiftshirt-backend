@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort, make_response
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import (Workout)
 
@@ -7,6 +8,7 @@ application = Flask(__name__)
 app = application
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
+CORS(app)
 
 @app.route('/')
 def index_page():
