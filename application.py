@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, abort, make_response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from models import (Workout)
+from models import (Workout, GenericCharacteristic)
 
 # Initialize Flask app with SQLAlchemy
 application = Flask(__name__)
@@ -17,6 +17,26 @@ def index_page():
 @app.route('/info')
 def info_page():
   return "A RESTful API in Flask using SQLAlchemy."
+
+@app.route('/api/v1/raw', methods=['POST'])
+def post_raw():
+  expected_fields = ['timestamp', 'charName', 'charValue']
+
+  if not request.is_json or not all(field in request.get_json() for field in expected_fields):
+    return bad_request('Bad or missing data.')
+
+  try:
+    charicteristic = GenericCharacteristic(
+      request.get_json()['charName'], 
+      request.get_json()['charValue'],
+      request.get_json()['timestamp'])
+
+    db.session.add(charicteristic)
+    db.session.commit()
+    return jsonify(charicteristic.serialize), 201
+  except:
+    return server_error("Unable to upload data")
+
 
 @app.route('/api/v1/workout/<id>', methods=['GET'])
 def get_workout(id):
