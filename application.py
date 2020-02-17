@@ -71,15 +71,36 @@ def end_workout():
     return server_error("Unable to upload data")
 
 
-@app.route('/api/v1/workout/<id>', methods=['GET'])
+@app.route('/api/v1/workouts/<id>', methods=['GET'])
 def get_workout(id):
   try:
-    workout = Workout.query.filter_by(id=id).first()
+    workout = WorkoutBounds.query.filter_by(id=id).first()
     return jsonify(workout.serialize)
   except:
-    return not_found("Workout does not exist")
+    return not_found("Workout not found")
 
-@app.route('/api/v1/workout', methods=['POST'])
+
+@app.route('/api/v1/workouts', methods=['GET'])
+def get_all_workouts():
+  expected_fields = ['offset', 'limit']
+  if not request.args or not all(field in request.args for field in expected_fields):
+    return bad_request('Bad or missing data.')
+
+  offset = int(request.args.get('offset'))
+  limit = int(request.args.get('limit'))
+  app.logger.info("offset: %d, limit: %d", offset, limit)
+
+  try: 
+    workout_bounds_query = WorkoutBounds.query.filter(WorkoutBounds.end != None).paginate(offset, limit, False)
+    total = workout_bounds_query.total
+    items = workout_bounds_query.items
+    db.session.commit()
+
+    return paginated_results(items, total)
+  except:
+    return not_found("Results not found")
+
+@app.route('/api/v1/workouts', methods=['POST'])
 def post_workout():
   expected_fields = ['name', 'avg_hrt']
 
@@ -124,6 +145,15 @@ def server_error(message):
 
 def no_content():
   response = make_response(jsonify(''), 204)
+  return response
+
+def paginated_results(items, total):
+  serialized_items = []
+  for item in items:
+    serialized_items.append(item.serialize)
+
+  response = jsonify({'items': serialized_items, 'total': total})
+  response.status_code = 200
   return response
 
 if __name__ == '__main__':
