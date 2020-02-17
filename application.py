@@ -59,10 +59,10 @@ def end_workout():
   expected_fields = ['workout_id', 'finished_at']
   if not request.is_json or not all(field in request.get_json() for field in expected_fields):
     return bad_request('Bad or missing data.')
-
-  try:
-    id = int(request.get_json()['workout_id'])
-    workout = WorkoutBounds.query.filter_by(id=id).first()
+  
+  try: 
+    workout_id = int(request.get_json()['workout_id'])
+    workout = db.session.query(WorkoutBounds).filter_by(id=workout_id).first()
     workout.end = int(request.get_json()['finished_at'])
     db.session.commit()
 
