@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, abort, make_response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from models import (Workout, GenericCharacteristic)
+from models import (Workout, GenericCharacteristic, WorkoutBounds)
 
 # Initialize Flask app with SQLAlchemy
 application = Flask(__name__)
@@ -20,20 +20,37 @@ def info_page():
 
 @app.route('/api/v1/raw', methods=['POST'])
 def post_raw():
-  expected_fields = ['timestamp', 'charName', 'charValue']
+  expected_fields = ['created_at', 'name', 'value', 'workout_id']
 
   if not request.is_json or not all(field in request.get_json() for field in expected_fields):
     return bad_request('Bad or missing data.')
 
   try:
-    charicteristic = GenericCharacteristic(
-      request.get_json()['charName'], 
-      request.get_json()['charValue'],
-      request.get_json()['timestamp'])
+    characteristic = GenericCharacteristic(
+      request.get_json()['workout_id'],
+      request.get_json()['name'], 
+      request.get_json()['value'],
+      request.get_json()['created_at'])
 
-    db.session.add(charicteristic)
+    db.session.add(characteristic)
     db.session.commit()
-    return jsonify(charicteristic.serialize), 201
+    return jsonify(characteristic.serialize), 201
+  except:
+    return server_error("Unable to upload data")
+
+@app.route('/api/v1/workout/start', methods=['POST'])
+def start_workout():
+  expected_fields = ['created_at']
+  if not request.is_json or not all(field in request.get_json() for field in expected_fields):
+    return bad_request('Bad or missing data.')
+
+  try:
+    workout = WorkoutBounds(
+      request.get_json()['created_at'])
+
+    db.session.add(workout)
+    db.session.commit()
+    return jsonify({"workout_id": workout.serialize.get("id")}), 201
   except:
     return server_error("Unable to upload data")
 
