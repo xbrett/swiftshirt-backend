@@ -54,6 +54,22 @@ def start_workout():
   except:
     return server_error("Unable to upload data")
 
+@app.route('/api/v1/workout/end', methods=['POST'])
+def end_workout():
+  expected_fields = ['workout_id', 'finished_at']
+  if not request.is_json or not all(field in request.get_json() for field in expected_fields):
+    return bad_request('Bad or missing data.')
+
+  try:
+    id = int(request.get_json()['workout_id'])
+    workout = WorkoutBounds.query.filter_by(id=id).first()
+    workout.end = int(request.get_json()['finished_at'])
+    db.session.commit()
+
+    return jsonify(workout.serialize), 201
+  except:
+    return server_error("Unable to upload data")
+
 
 @app.route('/api/v1/workout/<id>', methods=['GET'])
 def get_workout(id):
