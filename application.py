@@ -79,6 +79,24 @@ def get_workout(id):
   except:
     return not_found("Workout not found")
 
+@app.route('/api/v1/workouts/<id>/raw', methods=['GET'])
+def get_raw_workout(id):
+  expected_fields = ['offset', 'limit']
+  if not request.args or not all(field in request.args for field in expected_fields):
+    return bad_request('Bad or missing data.')
+  
+  offset = int(request.args.get('offset'))
+  limit = int(request.args.get('limit'))
+
+  try:
+    raw_workout_query = GenericCharacteristic.query.filter(GenericCharacteristic.workout_id==9).order_by(GenericCharacteristic.created_at.desc()).paginate(offset, limit, False)
+    total = raw_workout_query.total
+    items = raw_workout_query.items
+    db.session.commit()
+    return paginated_results(items, total)
+  except:
+    return not_found("Workout data not found")
+
 
 @app.route('/api/v1/workouts', methods=['GET'])
 def get_all_workouts():
@@ -88,7 +106,7 @@ def get_all_workouts():
 
   offset = int(request.args.get('offset'))
   limit = int(request.args.get('limit'))
-  app.logger.info("offset: %d, limit: %d", offset, limit)
+  # app.logger.info("offset: %d, limit: %d", offset, limit)
 
   try: 
     workout_bounds_query = WorkoutBounds.query.filter(WorkoutBounds.end != None).paginate(offset, limit, False)
