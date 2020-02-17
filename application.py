@@ -89,7 +89,7 @@ def get_raw_workout(id):
   limit = int(request.args.get('limit'))
 
   try:
-    raw_workout_query = GenericCharacteristic.query.filter(GenericCharacteristic.workout_id==9).order_by(GenericCharacteristic.created_at.desc()).paginate(offset, limit, False)
+    raw_workout_query = GenericCharacteristic.query.filter(GenericCharacteristic.workout_id==9).order_by(GenericCharacteristic.created_at.asc()).paginate(offset, limit, False)
     total = raw_workout_query.total
     items = raw_workout_query.items
     db.session.commit()
