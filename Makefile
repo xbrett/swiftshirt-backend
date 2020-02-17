@@ -1,5 +1,6 @@
-run:
-	python app.py
+build:
+	docker build -t swiftshirt-backend-2 .
 
-compile:
-	pip install -r requirements.txt
+run:
+	docker build -t swiftshirt-backend-2 .
+	docker run -p 5000:5000 swiftshirt-backend-2
