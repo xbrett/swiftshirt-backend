@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, abort, make_response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import (Workout, GenericCharacteristic, WorkoutBounds)
+import boto3
 
 # Initialize Flask app with SQLAlchemy
 application = Flask(__name__)
@@ -9,6 +10,9 @@ app = application
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 CORS(app)
+sqs = boto3.resource('sqs')
+queue = sqs.get_queue_by_name(QueueName='pending-workouts')
+
 
 @app.route('/')
 def index_page():
@@ -60,12 +64,12 @@ def end_workout():
   if not request.is_json or not all(field in request.get_json() for field in expected_fields):
     return bad_request('Bad or missing data.')
   
-  try: 
+  try:
     workout_id = int(request.get_json()['workout_id'])
     workout = db.session.query(WorkoutBounds).filter_by(id=workout_id).first()
     workout.end = int(request.get_json()['finished_at'])
     db.session.commit()
-
+    queue.send_message(MessageBody=str(workout.serialize))
     return jsonify(workout.serialize), 201
   except:
     return server_error("Unable to upload data")

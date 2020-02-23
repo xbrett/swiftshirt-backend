@@ -17,13 +17,13 @@ class Workout(db.Model):
   def serialize(self):
     """Return object data in easily serializeable format"""
     return {
-      'id': self.id,
-      'name': self.name,
-      'avg_hrt': self.avg_hrt
+      "id": self.id,
+      "name": self.name,
+      "avg_hrt": self.avg_hrt
     }
 
 class GenericCharacteristic(db.Model):
-  __tablename__ = 'generic_characteristic'
+  __tablename__ = "generic_characteristic"
   id = db.Column(db.Integer, primary_key=True)
   workout_id = db.Column(db.Integer)
   name = db.Column(db.String(50), nullable=False)
@@ -40,15 +40,15 @@ class GenericCharacteristic(db.Model):
   def serialize(self):
     """Return object data in easily serializeable format"""
     return {
-      'id': self.id,
-      'workout_id': self.workout_id,
-      'name': self.name,
-      'value': self.value,
-      'created_at': self.created_at
+      "id": self.id,
+      "workout_id": self.workout_id,
+      "name": self.name,
+      "value": self.value,
+      "created_at": self.created_at
     }
 
 class WorkoutBounds(db.Model):
-  __tablename__ = 'workout_bounds'
+  __tablename__ = "workout_bounds"
   id = db.Column(db.Integer, primary_key=True)
   start = db.Column(postgresql.BIGINT)
   end = db.Column(postgresql.BIGINT)
@@ -60,7 +60,7 @@ class WorkoutBounds(db.Model):
   def serialize(self):
     """Return object data in easily serializeable format"""
     return {
-      'id': self.id,
-      'start': self.start,
-      'end': self.end
+      "id": self.id,
+      "start": self.start,
+      "end": self.end
     }

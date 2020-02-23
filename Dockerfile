@@ -3,6 +3,7 @@ FROM python:3.6-alpine
 WORKDIR /usr/src/app
 
 EXPOSE 5000
+EXPOSE 80
 
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
